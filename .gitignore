@@ -34,3 +34,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# backend secrets
+chess-time-api/run.ps1
+
+# Maven build output
+chess-time-api/target/
+
+# env files (secrets)
+.env
+
+# IDE
+.idea/
+*.iml
+
+# Claude Code local settings
+.claude/settings.local.json

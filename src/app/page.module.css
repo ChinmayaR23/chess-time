@@ -1,0 +1,105 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: 1.5rem;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.accent { color: #4ade80; }
+
+.subtitle {
+  color: #9ca3af;
+  font-size: 1.125rem;
+}
+
+.card {
+  background: #1f2937;
+  border-radius: 1rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 22rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.label {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+
+.timeGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.timeBtn {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.timeBtnActive {
+  background: #16a34a;
+  color: #fff;
+}
+
+.timeBtnInactive {
+  background: #374151;
+  color: #d1d5db;
+}
+
+.timeBtnInactive:hover { background: #4b5563; }
+.timeBtn:disabled { opacity: 0.5; cursor: default; }
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+
+.ratingLabel { color: #9ca3af; }
+
+.ratingValue {
+  color: #fff;
+  font-weight: 600;
+}
+
+.guestNote { color: #6b7280; font-size: 0.75rem; margin-left: 0.25rem; }
+
+.statusRow { margin-top: 0.75rem; }
+
+.guestMsg {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.guestLink {
+  color: #4ade80;
+}
+
+.guestLink:hover { text-decoration: underline; }

@@ -1,0 +1,40 @@
+.container {
+  background: #1f2937;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.heading {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.num {
+  color: #6b7280;
+  width: 1.75rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.san {
+  color: #fff;
+  width: 3.5rem;
+}

@@ -1,5 +1,5 @@
 {
-  "name": "chess-time-temp",
+  "name": "chess-time",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,16 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.3.0",
+    "chess.js": "^1.4.0",
+    "express": "^5.2.1",
+    "next": "14.2.35",
     "react": "^18",
+    "react-chessboard": "^4.7.3",
     "react-dom": "^18",
-    "next": "14.2.35"
+    "sockjs-client": "^1.6.1"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@types/express": "^5.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1"
+    "@types/sockjs-client": "^1.5.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
   }
 }

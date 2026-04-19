@@ -1,0 +1,23 @@
+.clock {
+  font-family: monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.active {
+  background: #16a34a;
+  color: #fff;
+}
+
+.activeLow {
+  background: #dc2626;
+  color: #fff;
+}
+
+.inactive {
+  background: #374151;
+  color: #9ca3af;
+}
