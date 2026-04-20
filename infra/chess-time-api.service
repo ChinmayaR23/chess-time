@@ -1,0 +1,20 @@
+[Unit]
+Description=Chess Time Spring Boot API
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/opt/chess-time-api
+ExecStartPre=/opt/chess-time-api/ssm-env.sh
+EnvironmentFile=/etc/chesstime/env
+Environment=SPRING_DATASOURCE_URL=jdbc:mysql://chess-time-db.cb6osei2qmvh.eu-north-1.rds.amazonaws.com:3306/chesstime?createDatabaseIfNotExist=true&useSSL=true&allowPublicKeyRetrieval=true
+Environment=FRONTEND_URL=https://chesstime.duckdns.org
+ExecStart=/usr/bin/java -Xmx400m -Xms200m -jar /opt/chess-time-api/chess-time-api.jar
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

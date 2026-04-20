@@ -1,0 +1,166 @@
+CHESS-TIME AWS DEPLOYMENT STEPS
+================================
+Region: ap-south-1 (Mumbai)
+Email: chinmayarayee@gmail.com
+Cost: ~$13/month (year 1 free tier)
+
+STEP 1 — AWS Console Setup
+---------------------------
+1. Enable billing alerts:
+   AWS Console → Billing → Billing Preferences → check "Receive Billing Alerts" → Save
+
+2. Create Security Groups (EC2 Console → Security Groups):
+   sg-ec2:
+     - Inbound: port 22 (your IP only), port 80 (0.0.0.0/0), port 443 (0.0.0.0/0)
+   sg-rds:
+     - Inbound: port 3306 (source = sg-ec2)
+
+3. Create RDS Subnet Group:
+   RDS Console → Subnet Groups → Create
+   Use 2 private subnets in different AZs
+
+4. Launch RDS:
+   - Engine: MySQL 8.0
+   - Template: Free tier
+   - Instance: db.t3.micro
+   - Single-AZ
+   - Subnet group: the one you just created
+   - Security group: sg-rds
+   - Initial DB name: chesstime
+   NOTE DOWN: the RDS endpoint hostname (looks like chesstime.xxxx.ap-south-1.rds.amazonaws.com)
+
+5. Create IAM Role for EC2:
+   IAM Console → Roles → Create Role → EC2
+   Add inline policy:
+   {
+     "Version": "2012-10-17",
+     "Statement": [{
+       "Effect": "Allow",
+       "Action": "ssm:GetParametersByPath",
+       "Resource": "arn:aws:ssm:ap-south-1:*:parameter/chesstime/prod/*"
+     }]
+   }
+   Name the role: chess-time-ec2-role
+
+6. Launch EC2:
+   - AMI: Amazon Linux 2023
+   - Instance type: t2.micro  (FREE TIER)
+   - Subnet: public subnet
+   - Security group: sg-ec2
+   - IAM instance profile: chess-time-ec2-role
+   - Storage: 20GB gp3
+
+7. Allocate Elastic IP:
+   EC2 Console → Elastic IPs → Allocate → Associate with your EC2 instance
+   NOTE DOWN: the public DNS hostname
+   (looks like ec2-X-X-X-X.ap-south-1.compute.amazonaws.com)
+
+
+STEP 2 — Register OAuth Apps
+------------------------------
+Replace EC2_HOSTNAME below with your actual hostname from Step 1.7
+
+GitHub:
+  Go to: github.com → Settings → Developer Settings → OAuth Apps → New OAuth App
+  - Homepage URL: https://EC2_HOSTNAME
+  - Authorization callback URL: https://EC2_HOSTNAME/login/oauth2/code/github
+  NOTE DOWN: Client ID and Client Secret
+
+Google:
+  Go to: console.cloud.google.com → APIs & Services → Credentials → Create OAuth 2.0 Client
+  - Authorized redirect URI: https://EC2_HOSTNAME/login/oauth2/code/google
+  NOTE DOWN: Client ID and Client Secret
+
+
+STEP 3 — Store Secrets in AWS SSM Parameter Store
+---------------------------------------------------
+AWS Console → Systems Manager → Parameter Store → Create parameter
+Type: SecureString for all
+
+Create each of these (path prefix: /chesstime/prod/):
+  /chesstime/prod/DB_USERNAME       → chesstime_user
+  /chesstime/prod/DB_PASSWORD       → (generate a 32-char random password)
+  /chesstime/prod/JWT_SECRET        → (generate a 64-char hex random string)
+  /chesstime/prod/GITHUB_CLIENT_ID  → (from Step 2)
+  /chesstime/prod/GITHUB_CLIENT_SECRET → (from Step 2)
+  /chesstime/prod/GOOGLE_CLIENT_ID  → (from Step 2)
+  /chesstime/prod/GOOGLE_CLIENT_SECRET → (from Step 2)
+
+Also create the MySQL user on RDS (connect from EC2 using mysql client):
+  CREATE USER 'chesstime_user'@'%' IDENTIFIED BY '<DB_PASSWORD>';
+  GRANT ALL PRIVILEGES ON chesstime.* TO 'chesstime_user'@'%';
+  FLUSH PRIVILEGES;
+
+
+STEP 4 — Run Billing Setup (on your local machine)
+----------------------------------------------------
+Make sure AWS CLI is installed and configured (aws configure)
+Then run:
+  bash infra/billing-setup.sh
+
+Check chinmayarayee@gmail.com and confirm the SNS email subscription.
+
+
+STEP 5 — First EC2 Deploy
+--------------------------
+1. SSH into EC2:
+   ssh -i your-key.pem ec2-user@EC2_HOSTNAME
+
+2. Copy infra folder to EC2:
+   scp -i your-key.pem -r infra/ ec2-user@EC2_HOSTNAME:/home/ec2-user/infra
+
+3. Run setup script (replace EC2_HOSTNAME with your actual hostname):
+   bash infra/ec2-setup.sh ec2-X-X-X-X.ap-south-1.compute.amazonaws.com
+
+4. Edit the API systemd service to fill in placeholders:
+   sudo nano /etc/systemd/system/chess-time-api.service
+   Replace:
+     RDS_ENDPOINT  → your RDS endpoint from Step 1.4
+     EC2_HOSTNAME  → your EC2 hostname from Step 1.7
+
+5. Reload and start services:
+   sudo systemctl daemon-reload
+   sudo systemctl enable --now chess-time-api chess-time-frontend
+
+6. Check logs:
+   sudo journalctl -u chess-time-api -f
+   sudo journalctl -u chess-time-frontend -f
+
+
+STEP 6 — GitHub Actions Secrets
+---------------------------------
+GitHub repo → Settings → Secrets and variables → Actions → New repository secret
+
+Add these 3 secrets:
+  EC2_HOST           → ec2-X-X-X-X.ap-south-1.compute.amazonaws.com
+  EC2_SSH_KEY        → (paste full contents of your .pem private key file)
+  NEXT_PUBLIC_API_URL → https://ec2-X-X-X-X.ap-south-1.compute.amazonaws.com
+
+After this, every push to main/master auto-deploys both services.
+
+
+STEP 7 — End-to-End Verification
+----------------------------------
+1. API health check:
+   curl https://EC2_HOSTNAME/api/user/me
+   Expected: 401 Unauthorized (means Spring Boot is running)
+
+2. OAuth login test:
+   Open browser → https://EC2_HOSTNAME/login
+   Click GitHub → authorize → should land on /auth/callback with token → redirected home
+
+3. WebSocket test:
+   Open two browser tabs → matchmaking → game starts
+   Open DevTools → Network tab → filter by WS
+   Should see a WebSocket connection to wss://EC2_HOSTNAME/ws
+
+4. Gameplay test:
+   Make moves in both tabs → verify real-time updates
+   Verify clock ticks and game-over works
+
+
+PLACEHOLDER REFERENCE
+----------------------
+When you have real values, replace these everywhere:
+  EC2_HOSTNAME → ec2-X-X-X-X.ap-south-1.compute.amazonaws.com
+  RDS_ENDPOINT → chesstime.xxxxxxxx.ap-south-1.rds.amazonaws.com
