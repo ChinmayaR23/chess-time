@@ -271,7 +271,7 @@ public class GameSocketController {
         invite.expiresAt = System.currentTimeMillis() + 60_000;
         pendingInvites.put(invite.inviteId, invite);
 
-        messaging.convertAndSendToUser(toUserId, "/queue/friend-invite",
+        messaging.convertAndSend("/topic/user/" + toUserId + "/invite",
                 Map.of("inviteId", invite.inviteId,
                         "fromUserId", fromUserId,
                         "fromName", fromUser.getName(),
@@ -304,7 +304,7 @@ public class GameSocketController {
         }
 
         if (!accepted) {
-            messaging.convertAndSendToUser(invite.fromUserId, "/queue/friend-invite-declined",
+            messaging.convertAndSend("/topic/user/" + invite.fromUserId + "/invite-declined",
                     Map.of("message", invite.toUserId + " declined your invite."));
             return;
         }
@@ -344,13 +344,13 @@ public class GameSocketController {
             String whiteColor = "white";
             String blackColor = "black";
 
-            messaging.convertAndSendToUser(invite.fromUserId, "/queue/matched",
+            messaging.convertAndSend("/topic/user/" + invite.fromUserId + "/matched",
                     Map.of("gameId", dbGame.getId(),
                             "color", fromIsWhite ? whiteColor : blackColor,
                             "opponent", Map.of("name", toUser.getName(), "rating", toUser.getRating()),
                             "timeControl", invite.timeControl));
 
-            messaging.convertAndSendToUser(responderUserId, "/queue/matched",
+            messaging.convertAndSend("/topic/user/" + responderUserId + "/matched",
                     Map.of("gameId", dbGame.getId(),
                             "color", fromIsWhite ? blackColor : whiteColor,
                             "opponent", Map.of("name", fromUser.getName(), "rating", fromUser.getRating()),

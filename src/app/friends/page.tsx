@@ -55,7 +55,7 @@ export default function FriendsPage() {
     if (!client || !user) return;
 
     const subscribe = () => {
-      declinedSubRef.current = client.subscribe("/user/queue/friend-invite-declined", (msg) => {
+      declinedSubRef.current = client.subscribe(`/topic/user/${user.id}/invite-declined`, (msg) => {
         const data = JSON.parse(msg.body);
         setInviteSent(false);
         setInviteTarget(null);
@@ -136,7 +136,7 @@ export default function FriendsPage() {
     setInviteSent(true);
 
     matchedSubRef.current?.unsubscribe();
-    matchedSubRef.current = client.subscribe("/user/queue/matched", (msg) => {
+    matchedSubRef.current = client.subscribe(`/topic/user/${user.id}/matched`, (msg) => {
       const payload = JSON.parse(msg.body);
       matchedSubRef.current?.unsubscribe();
       sessionStorage.setItem(`game-color-${payload.gameId}`, payload.color);

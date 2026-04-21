@@ -22,7 +22,7 @@ export function GameInviteToast({ client, userId }: Props) {
   useEffect(() => {
     const subscribe = () => {
       inviteSubRef.current?.unsubscribe();
-      inviteSubRef.current = client.subscribe("/user/queue/friend-invite", (msg) => {
+      inviteSubRef.current = client.subscribe(`/topic/user/${userId}/invite`, (msg) => {
         const data: GameInvite = JSON.parse(msg.body);
         setInvite(data);
         setState("idle");
@@ -51,7 +51,7 @@ export function GameInviteToast({ client, userId }: Props) {
     if (!invite) return;
     setState("waiting");
 
-    matchedSubRef.current = client.subscribe("/user/queue/matched", (msg) => {
+    matchedSubRef.current = client.subscribe(`/topic/user/${userId}/matched`, (msg) => {
       const payload = JSON.parse(msg.body);
       matchedSubRef.current?.unsubscribe();
       sessionStorage.setItem(`game-color-${payload.gameId}`, payload.color);

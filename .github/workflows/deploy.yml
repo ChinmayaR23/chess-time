@@ -62,8 +62,10 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cp -r /opt/chess-time-frontend/public /opt/chess-time-frontend/.next/standalone/public
-            cp -r /opt/chess-time-frontend/.next/static /opt/chess-time-frontend/.next/standalone/.next/static
+            rm -rf /opt/chess-time-frontend/.next/standalone/public
+            cp -r /opt/chess-time-frontend/public /opt/chess-time-frontend/.next/standalone/
+            rm -rf /opt/chess-time-frontend/.next/standalone/.next/static
+            cp -r /opt/chess-time-frontend/.next/static /opt/chess-time-frontend/.next/standalone/.next/
             ln -sfn /opt/chess-time-frontend/.next/standalone/server.js /opt/chess-time-frontend/server.js
 
       - name: Restart services
