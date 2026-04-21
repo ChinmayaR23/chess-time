@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Chess } from "chess.js";
 import { Client } from "@stomp/stompjs";
+import { useConnectionId } from "@/hooks/useStompClient";
 import { MoveRecord, PlayerColor } from "@/types/game";
 
 interface UseChessGameOptions {
@@ -30,6 +31,7 @@ export function useChessGame({
   const [isMyTurn, setIsMyTurn] = useState(
     color === "white" ? chess.turn() === "w" : chess.turn() === "b"
   );
+  const connectionId = useConnectionId();
 
   useEffect(() => {
     if (!client.active) return;
@@ -60,7 +62,7 @@ export function useChessGame({
     });
 
     return () => sub.unsubscribe();
-  }, [client, gameId, chess, color]);
+  }, [client, gameId, chess, color, connectionId]);
 
   const onDrop = useCallback(
     (sourceSquare: string, targetSquare: string, piece: string): boolean => {

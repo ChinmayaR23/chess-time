@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
+import { useConnectionId } from "@/hooks/useStompClient";
 import styles from "./GameChat.module.css";
 
 interface ChatMsg { senderName: string; content: string; createdAt: string; }
@@ -18,6 +19,7 @@ export function GameChat({ client, gameId, myName, myUserId }: GameChatProps) {
   const [input, setInput] = useState("");
   const [open, setOpen] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const connectionId = useConnectionId();
 
   useEffect(() => {
     if (!client.active) return;
@@ -26,7 +28,7 @@ export function GameChat({ client, gameId, myName, myUserId }: GameChatProps) {
       if (data.type === "chat") setMessages((prev) => [...prev, data]);
     });
     return () => sub.unsubscribe();
-  }, [client, gameId]);
+  }, [client, gameId, connectionId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

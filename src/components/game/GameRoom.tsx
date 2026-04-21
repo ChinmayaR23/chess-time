@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useStompClient } from "@/hooks/useStompClient";
+import { useStompClient, useConnectionId } from "@/hooks/useStompClient";
 import { useChessGame } from "@/hooks/useChessGame";
 import { useChessClock } from "@/hooks/useChessClock";
 import { ChessBoard } from "@/components/board/ChessBoard";
@@ -27,6 +27,7 @@ export function GameRoom({ gameId, initialColor }: GameRoomProps) {
   const guestName = getOrCreateGuestName();
 
   const client = useStompClient(token);
+  const connectionId = useConnectionId();
   const [color] = useState<PlayerColor>(initialColor);
 
   const [gameOver, setGameOver] = useState<{
@@ -98,7 +99,7 @@ export function GameRoom({ gameId, initialColor }: GameRoomProps) {
       stateSub.unsubscribe();
       gameSub.unsubscribe();
     };
-  }, [client, gameId, guestId, color]);
+  }, [client, gameId, guestId, color, connectionId]);
 
   const resign = () => {
     if (gameOver) return;
