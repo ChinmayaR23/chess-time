@@ -20,11 +20,8 @@ export function GameInviteToast({ client, userId }: Props) {
   const matchedSubRef = useRef<{ unsubscribe: () => void } | null>(null);
 
   useEffect(() => {
-    let attempted = false;
-
     const subscribe = () => {
-      if (attempted) return;
-      attempted = true;
+      inviteSubRef.current?.unsubscribe();
       inviteSubRef.current = client.subscribe("/user/queue/friend-invite", (msg) => {
         const data: GameInvite = JSON.parse(msg.body);
         setInvite(data);
@@ -32,23 +29,19 @@ export function GameInviteToast({ client, userId }: Props) {
       });
     };
 
+    // Re-subscribe on every (re)connect so auth-triggered reconnects don't drop the subscription.
+    const prevOnConnect = client.onConnect;
+    client.onConnect = (frame) => {
+      prevOnConnect?.(frame);
+      subscribe();
+    };
+
     if (client.connected) {
       subscribe();
-    } else {
-      const interval = setInterval(() => {
-        if (client.connected) {
-          clearInterval(interval);
-          subscribe();
-        }
-      }, 500);
-      return () => {
-        clearInterval(interval);
-        inviteSubRef.current?.unsubscribe();
-        matchedSubRef.current?.unsubscribe();
-      };
     }
 
     return () => {
+      client.onConnect = prevOnConnect;
       inviteSubRef.current?.unsubscribe();
       matchedSubRef.current?.unsubscribe();
     };
