@@ -141,6 +141,7 @@ export default function FriendsPage() {
       matchedSubRef.current?.unsubscribe();
       sessionStorage.setItem(`game-color-${payload.gameId}`, payload.color);
       if (payload.timeControl) sessionStorage.setItem(`game-tc-${payload.gameId}`, String(payload.timeControl));
+      if (payload.opponent) sessionStorage.setItem(`game-opponent-${payload.gameId}`, JSON.stringify(payload.opponent));
       setInviteTarget(null);
       router.push(`/game/${payload.gameId}`);
     });

@@ -10,6 +10,7 @@ export default function GamePage() {
   const gameId = params.gameId as string;
   const [color, setColor] = useState<PlayerColor | null>(null);
   const [timeControlMs, setTimeControlMs] = useState<number | null>(null);
+  const [initialOpponent, setInitialOpponent] = useState<{ name: string; rating: number } | null>(null);
 
   useEffect(() => {
     const storedColor = sessionStorage.getItem(`game-color-${gameId}`);
@@ -21,6 +22,11 @@ export default function GamePage() {
 
     const storedTc = sessionStorage.getItem(`game-tc-${gameId}`);
     if (storedTc) setTimeControlMs(Number(storedTc) * 1000);
+
+    const storedOpponent = sessionStorage.getItem(`game-opponent-${gameId}`);
+    if (storedOpponent) {
+      try { setInitialOpponent(JSON.parse(storedOpponent)); } catch { /* ignore */ }
+    }
   }, [gameId]);
 
   if (!color) {
@@ -31,5 +37,5 @@ export default function GamePage() {
     );
   }
 
-  return <GameRoom gameId={gameId} initialColor={color} initialTimeMs={timeControlMs} />;
+  return <GameRoom gameId={gameId} initialColor={color} initialTimeMs={timeControlMs} initialOpponent={initialOpponent} />;
 }

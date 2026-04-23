@@ -25,7 +25,7 @@ export default function Home() {
 
   const client = useStompClient(token);
 
-  const { status, searchDuration, gameId, color, timeControl, findMatch, cancelSearch } = useMatchmaking({
+  const { status, searchDuration, gameId, color, timeControl, opponent, findMatch, cancelSearch } = useMatchmaking({
     client,
     guestId,
     userId: user?.id,
@@ -37,9 +37,10 @@ export default function Home() {
     if (status === "matched" && gameId) {
       sessionStorage.setItem(`game-color-${gameId}`, color ?? "white");
       if (timeControl) sessionStorage.setItem(`game-tc-${gameId}`, String(timeControl));
+      if (opponent) sessionStorage.setItem(`game-opponent-${gameId}`, JSON.stringify(opponent));
       router.push(`/game/${gameId}`);
     }
-  }, [status, gameId, color, timeControl, router]);
+  }, [status, gameId, color, timeControl, opponent, router]);
 
   return (
     <div className={styles.page}>

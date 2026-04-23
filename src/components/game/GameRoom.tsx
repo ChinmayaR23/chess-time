@@ -20,9 +20,10 @@ interface GameRoomProps {
   gameId: string;
   initialColor: PlayerColor;
   initialTimeMs?: number | null;
+  initialOpponent?: { name: string; rating: number } | null;
 }
 
-export function GameRoom({ gameId, initialColor, initialTimeMs }: GameRoomProps) {
+export function GameRoom({ gameId, initialColor, initialTimeMs, initialOpponent }: GameRoomProps) {
   const { user, token } = useAuth();
   const guestId = getOrCreateGuestId();
   const guestName = getOrCreateGuestName();
@@ -38,14 +39,14 @@ export function GameRoom({ gameId, initialColor, initialTimeMs }: GameRoomProps)
   } | null>(null);
 
   const [whitePlayer, setWhitePlayer] = useState<PlayerInfo>({
-    name: color === "white" ? (user?.name ?? guestName) : "Opponent",
-    rating: color === "white" ? (user?.rating ?? 1200) : 1200,
-    isGuest: color !== "white" || !user,
+    name: color === "white" ? (user?.name ?? guestName) : (initialOpponent?.name ?? "Opponent"),
+    rating: color === "white" ? (user?.rating ?? 1200) : (initialOpponent?.rating ?? 1200),
+    isGuest: color === "white" ? !user : false,
   });
   const [blackPlayer, setBlackPlayer] = useState<PlayerInfo>({
-    name: color === "black" ? (user?.name ?? guestName) : "Opponent",
-    rating: color === "black" ? (user?.rating ?? 1200) : 1200,
-    isGuest: color !== "black" || !user,
+    name: color === "black" ? (user?.name ?? guestName) : (initialOpponent?.name ?? "Opponent"),
+    rating: color === "black" ? (user?.rating ?? 1200) : (initialOpponent?.rating ?? 1200),
+    isGuest: color === "black" ? !user : false,
   });
 
   const [serverWhiteTime, setServerWhiteTime] = useState(initialTimeMs ?? 600_000);
