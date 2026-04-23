@@ -1,0 +1,96 @@
+\documentclass{resume}
+
+\usepackage[left=0.35in,top=0.3in,right=0.35in,bottom=0.3in]{geometry}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage[hidelinks]{hyperref}
+
+\setlist[itemize]{noitemsep, topsep=0pt, parsep=0pt}
+
+\newcommand{\tab}[1]{\hspace{.2667\textwidth}\rlap{#1}}
+\newcommand{\itab}[1]{\hspace{0em}\rlap{#1}}
+\name{CHINMAYA R}
+
+\address{Bangalore, India \quad +91 89702 49705}
+
+\address{
+\href{mailto:chinmayar2003@gmail.com}{chinmayar2003@gmail.com} \quad
+\href{https://github.com/ChinmayaR23}{github.com/ChinmayaR23} \quad
+\href{https://leetcode.com/u/ChinmayaRao/}{leetcode.com/ChinmayaRao} \quad
+\href{https://www.linkedin.com/in/chinmaya-r-/}{LinkedIn}
+}
+\begin{document}
+
+\begin{rSection}{EDUCATION}
+
+{\bf Bachelor of Technology in Computer Science} \hfill {2021 -- 2025} \\
+PES University, Bangalore \hfill \textit{CGPA: 9.0/10.0}
+
+\end{rSection}
+
+\begin{rSection}{SKILLS}
+\begin{tabular}{ @{} >{\bfseries}l @{\hspace{6ex}} l }
+Languages        & Java, C++, Go, Python, Solidity \\
+Databases        & MySQL, Vertica, MongoDB \\
+Cloud \& DevOps  & Docker, AWS (Basic), Git/GitHub \\
+Frameworks \& Tools & Spring Boot, VS Code, OpenAI Gym, Remix IDE \\
+\end{tabular}
+\end{rSection}
+
+\begin{rSection}{WORK EXPERIENCE}
+
+\textbf{Associate Software Engineer (Backend)} \hfill {Jun 2025 -- Present} \\
+\textit{Netcore Cloud} \hfill \textit{Bangalore, India}
+\begin{itemize}
+    \item Engineered analytical modules in Java, Python and Go for \textbf{RFM segmentation, engagement analysis and cohort analysis}, enabling marketers to derive insights from large user datasets.
+    \item Wrote optimized SQL queries on \textbf{Vertica} to handle large-scale aggregations and improve report generation speed.
+\end{itemize}
+
+\textbf{Backend Intern} \hfill {Jan 2025 -- Jun 2025} \\
+\textit{Netcore Cloud} \hfill \textit{Bangalore, India}
+\begin{itemize}
+    \item Built internal synthetic data generation tools to accelerate feature testing in lower environments and reduce QA dependency.
+\end{itemize}
+
+\end{rSection}
+
+\begin{rSection}{RESEARCH PUBLICATIONS}
+
+\textbf{Enhancing Efficiency in Smart Grid Billing with Blockchain Technology}
+\href{https://ieeexplore.ieee.org/abstract/document/10625244}{(Paper Link)} \hfill {2024} \\
+\textit{International Conference on Sustainable Computing and Smart Systems (ICSCSS)}
+\begin{itemize}
+    \item Authored and presented a paper proposing a decentralized smart grid billing architecture using Solidity smart contracts.
+\end{itemize}
+
+\end{rSection}
+
+\begin{rSection}{PROJECTS}
+
+\textbf{PathFinder — RL-based Connectivity System} $|$ \textit{Python, OpenAI Gym, PPO} \hfill {2024}
+\begin{itemize}
+    \item Built a \textbf{reinforcement learning} agent to determine optimal infrastructure paths balancing elevation, vegetation (NDVI) and urban constraints.
+    \item Processed geospatial raster data into feature matrices to train a Proximal Policy Optimization (PPO) model.
+    \item Designed the system to minimize environmental impact while maximizing connectivity efficiency between urban nodes.
+\end{itemize}
+
+\textbf{ChessTime — Real-Time Multiplayer Chess Platform} $|$ \textit{Next.js 14, Spring Boot, WebSocket, MySQL} \hfill {2025} \\
+\href{https://chesstime.duckdns.org/}{Live Demo} \quad
+\href{https://github.com/ChinmayaR23/chess-time}{github.com/ChinmayaR23/chess-time}
+\begin{itemize}
+    \item Built a full-stack real-time chess platform with live matchmaking and server-authoritative clock management using STOMP over WebSocket.
+    \item Implemented JWT-based OAuth2 authentication (GitHub/Google), Elo rating system, and persistent game history.
+    \item Optimized move throughput with asynchronous database writes and scalable backend architecture.
+\end{itemize}
+
+\end{rSection}
+
+\begin{rSection}{ACADEMIC ACHIEVEMENTS}
+\begin{itemize}
+    \item \textbf{Prof. MRD Scholarship:} Four-time recipient for maintaining SGPA within the top 20\% at PES University.
+    \item \textbf{Prof. CNR Rao Scholarship:} Two-time recipient for ranking within the top 5\% of the batch.
+    \item \textbf{Code Battle Winner:} Member of the winning team (twice) at PES University coding competition.
+\end{itemize}
+\end{rSection}
+
+\end{document}

@@ -17,6 +17,7 @@ export function useMatchmaking({ client, guestId, userId, name, rating }: UseMat
   const [searchDuration, setSearchDuration] = useState(0);
   const [gameId, setGameId] = useState<string | null>(null);
   const [color, setColor] = useState<PlayerColor | null>(null);
+  const [timeControl, setTimeControl] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const subRef = useRef<{ unsubscribe: () => void } | null>(null);
 
@@ -37,6 +38,7 @@ export function useMatchmaking({ client, guestId, userId, name, rating }: UseMat
       const payload = JSON.parse(msg.body);
       setGameId(payload.gameId);
       setColor(payload.color);
+      setTimeControl(payload.timeControl ?? null);
       setStatus("matched");
       if (timerRef.current) clearInterval(timerRef.current);
       subRef.current?.unsubscribe();
@@ -58,5 +60,5 @@ export function useMatchmaking({ client, guestId, userId, name, rating }: UseMat
     subRef.current?.unsubscribe();
   };
 
-  return { status, searchDuration, gameId, color, findMatch, cancelSearch };
+  return { status, searchDuration, gameId, color, timeControl, findMatch, cancelSearch };
 }

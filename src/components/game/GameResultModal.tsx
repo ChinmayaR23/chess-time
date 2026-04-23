@@ -45,7 +45,7 @@ export function GameResultModal({ result, winner, myColor, ratingDelta }: GameRe
         )}
 
         <div className={styles.actions}>
-          <button onClick={() => router.push("/")} className={styles.playAgainBtn}>Play Again</button>
+          <button onClick={() => router.push("/")} className={styles.playAgainBtn}>Home</button>
           <button onClick={() => router.push("/profile")} className={styles.profileBtn}>View Profile</button>
         </div>
       </div>

@@ -9,16 +9,18 @@ export default function GamePage() {
   const params = useParams();
   const gameId = params.gameId as string;
   const [color, setColor] = useState<PlayerColor | null>(null);
+  const [timeControlMs, setTimeControlMs] = useState<number | null>(null);
 
   useEffect(() => {
-    // Read color assigned during matchmaking
-    const stored = sessionStorage.getItem(`game-color-${gameId}`);
-    if (stored === "white" || stored === "black") {
-      setColor(stored);
+    const storedColor = sessionStorage.getItem(`game-color-${gameId}`);
+    if (storedColor === "white" || storedColor === "black") {
+      setColor(storedColor);
     } else {
-      // Default white if arriving via direct link (spectator/reconnect)
       setColor("white");
     }
+
+    const storedTc = sessionStorage.getItem(`game-tc-${gameId}`);
+    if (storedTc) setTimeControlMs(Number(storedTc) * 1000);
   }, [gameId]);
 
   if (!color) {
@@ -29,5 +31,5 @@ export default function GamePage() {
     );
   }
 
-  return <GameRoom gameId={gameId} initialColor={color} />;
+  return <GameRoom gameId={gameId} initialColor={color} initialTimeMs={timeControlMs} />;
 }

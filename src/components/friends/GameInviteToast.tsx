@@ -55,6 +55,7 @@ export function GameInviteToast({ client, userId }: Props) {
       const payload = JSON.parse(msg.body);
       matchedSubRef.current?.unsubscribe();
       sessionStorage.setItem(`game-color-${payload.gameId}`, payload.color);
+      if (payload.timeControl) sessionStorage.setItem(`game-tc-${payload.gameId}`, String(payload.timeControl));
       setInvite(null);
       router.push(`/game/${payload.gameId}`);
     });

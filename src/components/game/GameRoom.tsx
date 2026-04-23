@@ -19,9 +19,10 @@ type GameResult = "WHITE_WINS" | "BLACK_WINS" | "DRAW" | "ABORTED";
 interface GameRoomProps {
   gameId: string;
   initialColor: PlayerColor;
+  initialTimeMs?: number | null;
 }
 
-export function GameRoom({ gameId, initialColor }: GameRoomProps) {
+export function GameRoom({ gameId, initialColor, initialTimeMs }: GameRoomProps) {
   const { user, token } = useAuth();
   const guestId = getOrCreateGuestId();
   const guestName = getOrCreateGuestName();
@@ -47,8 +48,8 @@ export function GameRoom({ gameId, initialColor }: GameRoomProps) {
     isGuest: color !== "black" || !user,
   });
 
-  const [serverWhiteTime, setServerWhiteTime] = useState(600_000);
-  const [serverBlackTime, setServerBlackTime] = useState(600_000);
+  const [serverWhiteTime, setServerWhiteTime] = useState(initialTimeMs ?? 600_000);
+  const [serverBlackTime, setServerBlackTime] = useState(initialTimeMs ?? 600_000);
   const [serverTurn, setServerTurn] = useState<"w" | "b">("w");
   const [drawOffer, setDrawOffer] = useState<PlayerColor | null>(null);
 

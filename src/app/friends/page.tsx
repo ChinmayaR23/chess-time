@@ -140,6 +140,7 @@ export default function FriendsPage() {
       const payload = JSON.parse(msg.body);
       matchedSubRef.current?.unsubscribe();
       sessionStorage.setItem(`game-color-${payload.gameId}`, payload.color);
+      if (payload.timeControl) sessionStorage.setItem(`game-tc-${payload.gameId}`, String(payload.timeControl));
       setInviteTarget(null);
       router.push(`/game/${payload.gameId}`);
     });
