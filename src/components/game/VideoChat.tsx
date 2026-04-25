@@ -28,11 +28,11 @@ export function VideoChat({
 
   useEffect(() => {
     if (localRef.current) localRef.current.srcObject = localStream;
-  }, [localStream]);
+  }, [localStream, videoState]);
 
   useEffect(() => {
     if (remoteRef.current) remoteRef.current.srcObject = remoteStream;
-  }, [remoteStream]);
+  }, [remoteStream, videoState]);
 
   if (videoState === "off") {
     return (
