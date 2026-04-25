@@ -10,6 +10,8 @@ import { MoveHistory } from "@/components/board/MoveHistory";
 import { PlayerCard } from "@/components/game/PlayerCard";
 import { GameResultModal } from "@/components/game/GameResultModal";
 import { GameChat } from "@/components/chat/GameChat";
+import { VideoChat } from "@/components/game/VideoChat";
+import { useWebRTC } from "@/hooks/useWebRTC";
 import { PlayerColor, PlayerInfo } from "@/types/game";
 import { getOrCreateGuestId, getOrCreateGuestName } from "@/lib/guest";
 import styles from "./GameRoom.module.css";
@@ -54,6 +56,11 @@ export function GameRoom({ gameId, initialColor, initialTimeMs, initialOpponent 
   const [serverTurn, setServerTurn] = useState<"w" | "b">("w");
   const [drawOffer, setDrawOffer] = useState<PlayerColor | null>(null);
 
+  const {
+    videoState, localStream, remoteStream,
+    startVideo, acceptVideo, declineVideo, stopVideo, handleSignal,
+  } = useWebRTC({ client, gameId, myColor: color });
+
   const { fen, moves, isMyTurn, onDrop } = useChessGame({ client, gameId, color });
   const { whiteTime, blackTime } = useChessClock({
     whiteTimeLeft: serverWhiteTime,
@@ -81,7 +88,7 @@ export function GameRoom({ gameId, initialColor, initialTimeMs, initialOpponent 
       setServerTurn(state.turn);
     });
 
-    // Game topic (moves, over, draw, chat)
+    // Game topic (moves, over, draw, chat, webrtc signals)
     const gameSub = client.subscribe(`/topic/game/${gameId}`, (msg) => {
       const data = JSON.parse(msg.body);
 
@@ -94,6 +101,8 @@ export function GameRoom({ gameId, initialColor, initialTimeMs, initialOpponent 
         setDrawOffer(data.by);
       } else if (data.type === "draw_declined") {
         setDrawOffer(null);
+      } else if (typeof data.type === "string" && data.type.startsWith("webrtc_")) {
+        handleSignal(data);
       }
     });
 
@@ -101,7 +110,13 @@ export function GameRoom({ gameId, initialColor, initialTimeMs, initialOpponent 
       stateSub.unsubscribe();
       gameSub.unsubscribe();
     };
-  }, [client, gameId, guestId, color, connectionId]);
+  }, [client, gameId, guestId, color, connectionId, handleSignal]);
+
+  // Stop video when game ends
+  useEffect(() => {
+    if (gameOver && videoState !== "off") stopVideo();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameOver]);
 
   const resign = () => {
     if (gameOver) return;
@@ -155,6 +170,15 @@ export function GameRoom({ gameId, initialColor, initialTimeMs, initialOpponent 
       </div>
 
       <div className={styles.sidePanel}>
+        <VideoChat
+          videoState={videoState}
+          localStream={localStream}
+          remoteStream={remoteStream}
+          onStart={startVideo}
+          onAccept={acceptVideo}
+          onDecline={declineVideo}
+          onStop={stopVideo}
+        />
         <div className={styles.moveHistoryWrap}><MoveHistory moves={moves} /></div>
         <GameChat client={client} gameId={gameId} myName={user?.name ?? guestName} myUserId={user?.id} />
       </div>

@@ -362,6 +362,14 @@ public class GameSocketController {
         }
     }
 
+    @MessageMapping("/game/webrtc-signal")
+    public void webrtcSignal(@Payload Map<String, Object> payload) {
+        String gameId = (String) payload.get("gameId");
+        if (gameId == null) return;
+        if (gameService.getActiveGame(gameId) == null) return;
+        messaging.convertAndSend("/topic/game/" + gameId, payload);
+    }
+
     @EventListener
     public void handleDisconnect(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
